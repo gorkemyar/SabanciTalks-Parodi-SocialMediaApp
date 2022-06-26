@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sabanci_talks/sign_in/view/reset_password_view.dart';
-import 'dart:convert';
+import 'package:sabanci_talks/navigation/navigation_constants.dart';
+import 'package:sabanci_talks/navigation/navigation_service.dart';
 import 'dart:io' show Platform;
 import "package:sabanci_talks/util/styles.dart";
 import "package:sabanci_talks/util/colors.dart";
@@ -8,7 +8,6 @@ import "package:sabanci_talks/util/dimensions.dart";
 import "package:sabanci_talks/util/screen_sizes.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:email_validator/email_validator.dart';
-import "package:sabanci_talks/sign_up/view/sign_up_view.dart";
 
 class ForgetPass extends StatefulWidget {
   const ForgetPass({Key? key}) : super(key: key);
@@ -43,7 +42,7 @@ class _ForgetPassState extends State<ForgetPass> {
               ),
               actions: [
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -62,7 +61,7 @@ class _ForgetPassState extends State<ForgetPass> {
               ),
               actions: [
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -113,8 +112,8 @@ class _ForgetPassState extends State<ForgetPass> {
                           width: 100,
                           child: Row(
                             children: [
-                              Icon(Icons.email),
-                              SizedBox(width: 4),
+                              const Icon(Icons.email),
+                              const SizedBox(width: 4),
                               Text('Email', style: inputTextStyle),
                             ],
                           ),
@@ -123,7 +122,7 @@ class _ForgetPassState extends State<ForgetPass> {
                         filled: false,
                         labelStyle: kBoldLabelStyle,
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             width: 1,
                             color: AppColors.primary,
                           ),
@@ -155,10 +154,8 @@ class _ForgetPassState extends State<ForgetPass> {
                         } else {
                           _showDialog('Form Error', 'Your form is invalid');
                         }
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ResetPass()));
+                        NavigationService.instance.navigateToPageClear(
+                            path: NavigationConstants.RESET_PASS);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12.0),

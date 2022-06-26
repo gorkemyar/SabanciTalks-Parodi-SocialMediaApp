@@ -42,12 +42,33 @@ dependencies:
   shared_preferences: ^2.0.13
   dotted_border: ^2.0.0
   image_picker: ^0.8.5
+  http: ^0.13.1
+  json_annotation: any
+  firebase_core: ^1.11.0
+  firebase_analytics: ^9.1.9
+  firebase_auth: 3.3.8
+  firebase_storage: ^10.2.4
+  provider: ^6.0.0
+  flutter_bloc: ^8.0.0
+  equatable: ^2.0.3
+  google_sign_in: any
+  cloud_firestore: any
+  firebase_crashlytics: ^2.8.1
+  fluttertoast: ^8.0.9
+  flutter_chat_ui: ^1.5.8
 
-
-
+dependency_overrides:
+  photo_view:
+    git:
+      url: https://github.com/bluefireteam/photo_view
+      ref: master
+      
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  freezed: any
+  json_serializable: any
+  build_runner: 2.1.7
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -55,7 +76,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
-
+  analyzer: any
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-//import 'package:week_5/routes/login.dart';
-//import 'package:week_5/routes/signup.dart';
-//import 'package:week_5/util/colors.dart';
 import 'package:sabanci_talks/util/colors.dart';
-//import 'package:week_5/util/styles.dart';
-import 'package:sabanci_talks/sign_up/view/sign_up_view.dart';
-import 'package:sabanci_talks/sign_in/view/sign_in_view.dart';
-//import 'package:sabanci_talks/home/view/home_view.dart';
 import 'package:sabanci_talks/util/styles.dart';
-import "package:sabanci_talks/util/dimensions.dart";
 import "package:sabanci_talks/util/dimensions.dart";
 import 'package:sabanci_talks/welcome/view/welcome_view.dart';
 
@@ -22,7 +14,7 @@ class DeleteAccount extends StatelessWidget {
       appBar: AppBar(
         title: const Text(""),
         backgroundColor: Colors.white10,
-        leading: BackButton(color: AppColors.primary),
+        leading: const BackButton(color: AppColors.primary),
         elevation: 0,
       ),
       body: SafeArea(

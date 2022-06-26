@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import "package:sabanci_talks/util/styles.dart";
+import 'package:sabanci_talks/navigation/navigation_constants.dart';
+import 'package:sabanci_talks/navigation/navigation_service.dart';
 import "package:sabanci_talks/util/colors.dart";
-import "package:sabanci_talks/util/dimensions.dart";
 import "package:sabanci_talks/util/screen_sizes.dart";
-import 'package:sabanci_talks/welcome/view/welcome_view.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({Key? key}) : super(key: key);
@@ -50,22 +49,10 @@ class _IntroScreenState extends State<IntroScreen> {
           title: "",
         ),
       ],
-      onDone: () => {
-        Navigator.pushAndRemoveUntil<void>(
-          context,
-          MaterialPageRoute<void>(
-              builder: (BuildContext context) => const Welcome()),
-          ModalRoute.withName('/'),
-        )
-      },
-      onSkip: () => {
-        Navigator.pushAndRemoveUntil<void>(
-          context,
-          MaterialPageRoute<void>(
-              builder: (BuildContext context) => const Welcome()),
-          ModalRoute.withName('/'),
-        )
-      },
+      onDone: () => NavigationService.instance
+          .navigateToPageClear(path: NavigationConstants.WELCOME),
+      onSkip: () => NavigationService.instance
+          .navigateToPageClear(path: NavigationConstants.WELCOME),
       showSkipButton: true,
       skipFlex: 0,
       nextFlex: 0,

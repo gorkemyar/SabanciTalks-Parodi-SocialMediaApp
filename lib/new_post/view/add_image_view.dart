@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 
 class AddImageView extends StatefulWidget {
-  const AddImageView({ Key? key }) : super(key: key);
+  final bool isCamera;
+  const AddImageView(this.isCamera, { Key? key }) : super(key: key);
 
   @override
   State<AddImageView> createState() => _AddImageViewState();
@@ -19,11 +20,13 @@ class _AddImageViewState extends State<AddImageView> {
         radius: const Radius.circular(20.0),
         dashPattern: const [10, 5],
        
-        child: const SizedBox(
+        child: SizedBox(
           height: 100,
           width: 100,
           child: Icon(
-            Icons.add
+            
+            widget.isCamera ? Icons.camera_alt: Icons.add
+
           ),
         )),
     );

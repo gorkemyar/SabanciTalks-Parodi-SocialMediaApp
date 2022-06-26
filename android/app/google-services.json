@@ -1,0 +1,78 @@
+{
+  "project_info": {
+    "project_number": "1066515621416",
+    "project_id": "sabancitalks-2022",
+    "storage_bucket": "sabancitalks-2022.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066515621416:android:c53ce24e7a972d49d7b71d",
+        "android_client_info": {
+          "package_name": "com.example.sabanci_talks.sabanci_talks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1066515621416-h42i8m72lk864rmnkjumiue8jcdf6f0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sabanci_talks.sabanci_talks",
+            "certificate_hash": "3f5ffdcb18fa08b7a89f5d2d28b58806cfe789da"
+          }
+        },
+        {
+          "client_id": "1066515621416-is3tsa8f2cn2p5j4jc5d7b6mptvl7t50.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sabanci_talks.sabanci_talks",
+            "certificate_hash": "e412d871165a678ca3eb7c2341eaf05584f269d2"
+          }
+        },
+        {
+          "client_id": "1066515621416-jg0oc0ccbqnaah4qeomocgnh4i074dk4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sabanci_talks.sabanci_talks",
+            "certificate_hash": "ce78049ee2c5eaff2868187af37a907ddf677ae8"
+          }
+        },
+        {
+          "client_id": "1066515621416-v1mrpq2e5dnes1bvtq1l28lhfl7g6j3b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sabanci_talks.sabanci_talks",
+            "certificate_hash": "8530c0145f87323cee2b89db547c65ce83d394c8"
+          }
+        },
+        {
+          "client_id": "1066515621416-149ts0js9e6oq6p1858b2aqtdcm14ps9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjczdkuiNihRg6UXV3vOz5qOnl8PqaW_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1066515621416-149ts0js9e6oq6p1858b2aqtdcm14ps9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1066515621416-drl1qjdcguv7nko0b23bv9hd0l7aei9n.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sabancitalks.sabanciTalks"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

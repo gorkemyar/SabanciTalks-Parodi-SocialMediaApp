@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-//import 'package:week_5/routes/login.dart';
-//import 'package:week_5/routes/signup.dart';
-//import 'package:week_5/util/colors.dart';
 import 'package:sabanci_talks/util/colors.dart';
-//import 'package:week_5/util/styles.dart';
 import 'package:sabanci_talks/sign_up/view/sign_up_view.dart';
 import 'package:sabanci_talks/sign_in/view/sign_in_view.dart';
-//import 'package:sabanci_talks/home/view/home_view.dart';
 import 'package:sabanci_talks/util/styles.dart';
 import "package:sabanci_talks/util/dimensions.dart";
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({Key? key}) : super(key: key);
-
+  static const String routeName = "/welcome";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,8 +61,10 @@ class Welcome extends StatelessWidget {
                     flex: 1,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => SignIn()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignIn()));
                       },
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -92,8 +91,8 @@ class Welcome extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => SignUp()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const SignUp()));
               },
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -109,9 +108,8 @@ class Welcome extends StatelessWidget {
             ),
             const Spacer(),
             Padding(
-              padding: Dimen.regularPadding,
-              child:Text("@ 2022 Void", style:smallTextStyle)
-            )
+                padding: Dimen.regularPadding,
+                child: Text("@ 2022 Void", style: smallTextStyle))
           ],
         ),
       ),

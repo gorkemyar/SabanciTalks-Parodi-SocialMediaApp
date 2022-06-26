@@ -1,16 +1,37 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:sabanci_talks/firestore_classes/firestore_main/firestore.dart';
+import 'package:sabanci_talks/firestore_classes/post/my_posts.dart';
 import 'package:sabanci_talks/home/view/comment_view.dart';
-import 'package:sabanci_talks/home/view/likes_view.dart';
+import 'package:sabanci_talks/navigation/navigation_constants.dart';
+import 'package:sabanci_talks/navigation/navigation_service.dart';
 import 'package:sabanci_talks/post/functions/post_functions.dart';
 import 'package:sabanci_talks/post/model/post_model.dart';
 import 'package:sabanci_talks/util/colors.dart';
-import 'package:sabanci_talks/util/icon/entypo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class PostHeroModel {
+  int? likeCount;
+  int? commentCount;
+  int? contentCount;
+  int? index;
+  List<String>? imgUrls;
+  bool? isLiked;
+
+  PostHeroModel({
+    this.likeCount,
+    this.commentCount,
+    this.contentCount,
+    this.imgUrls,
+    this.index,
+    this.isLiked = false,
+  });
+}
 
 class PostView extends StatefulWidget {
   final PostModel postModel;
-
   const PostView({Key? key, required this.postModel}) : super(key: key);
 
   @override
@@ -18,12 +39,78 @@ class PostView extends StatefulWidget {
 }
 
 class _PostViewState extends State<PostView> {
-  bool isLiked = false, isSaved = false;
+  bool isSaved = false;
+  MyPost? myPost;
+  List<String> likeArrCopy = [];
 
-  changeLike() {
+  changeLike() async {
+    var prefs = await SharedPreferences.getInstance();
+    String uid = prefs.getString("user") ?? "";
+    Firestore f = Firestore();
+    myPost = await f.getSpecificPost(widget.postModel.postId);
+    likeArrCopy = [];
+
+    if (myPost != null ? myPost!.likeArr.isNotEmpty : false) {
+      for (String user in myPost!.likeArr) {
+        likeArrCopy.add(user);
+      }
+    }
+
+    debugPrint("mypost $myPost");
+
+    // If uid is in the likeArr remove it and set isLiked false
+    // else add uid to the likeArr and set isLiked true
+    if (uid != "") {
+      if (likeArrCopy.contains(uid)) {
+        // user liked the picture before
+        likeArrCopy.remove(uid);
+        await f.updatePost(
+            docId: widget.postModel.postId,
+            uid: myPost?.uid,
+            createdAt: myPost?.createdAt,
+            postText: myPost?.postText,
+            pictureUrlArr: myPost?.pictureUrlArr,
+            likeArr: likeArrCopy);
+        widget.postModel.isLiked = false;
+      } else {
+        // user did not like the picture before
+        likeArrCopy.add(uid);
+        await f.updatePost(
+            docId: widget.postModel.postId,
+            uid: myPost?.uid,
+            createdAt: myPost?.createdAt,
+            postText: myPost?.postText,
+            pictureUrlArr: myPost?.pictureUrlArr,
+            likeArr: likeArrCopy);
+        widget.postModel.isLiked = true;
+        await f.addNotification(
+            uid: myPost?.uid,
+            notification_type: "like",
+            uid_sub: uid,
+            isPost: true,
+            postId: widget.postModel.postId);
+      }
+    }
     setState(() {
-      isLiked = !isLiked;
+      //widget.postModel.isLiked = widget.postModel.isLiked!;
+      widget.postModel.likeCount = likeArrCopy.length;
     });
+  }
+
+  openPostHero({
+    required PostModel post,
+    required int index,
+  }) {
+    List<String> imgUrls = post.contents!.map((e) => e.source!).toList();
+    PostHeroModel postHero = PostHeroModel(
+        likeCount: post.likeCount,
+        commentCount: post.commentCount,
+        contentCount: post.contentCount,
+        imgUrls: imgUrls,
+        index: index,
+        isLiked: post.isLiked);
+    NavigationService.instance
+        .navigateToPage(path: NavigationConstants.SINGLE_POST, data: postHero);
   }
 
   changeSave() {
@@ -69,7 +156,6 @@ class _PostViewState extends State<PostView> {
       leading: _profilePicture(),
       title: _title(),
       subtitle: _subtitle(),
-      trailing: _trailing(),
     );
   }
 
@@ -97,13 +183,7 @@ class _PostViewState extends State<PostView> {
         ),
       );
 
-  Text _subtitle() => Text(convertDate(widget.postModel.date!));
-
-  IconButton _trailing() => IconButton(
-        icon: const Icon(Entypo.dot_3),
-        color: const Color(0xFF74798B),
-        onPressed: () {},
-      );
+  Text _subtitle() => Text(widget.postModel.date!);
 
   Padding _postText() {
     return Padding(
@@ -121,24 +201,25 @@ class _PostViewState extends State<PostView> {
 
   Padding _buttons() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(62, 0, 0, 0),
-      child: Row(children: [
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         Row(
           children: [
             IconButton(
-              padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
-              constraints: const BoxConstraints(),
               splashColor: Colors.transparent,
               icon: Icon(
-                isLiked ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                widget.postModel.isLiked!
+                    ? CupertinoIcons.heart_fill
+                    : CupertinoIcons.heart,
               ),
-              color: isLiked ? AppColors.secondary : AppColors.darkGrey,
+              color: widget.postModel.isLiked!
+                  ? AppColors.secondary
+                  : AppColors.darkGrey,
               iconSize: 18,
               onPressed: () => changeLike(),
             ),
             InkWell(
-                onTap: () => Navigator.push(context,
-                    CupertinoPageRoute(builder: (context) => const Likes())),
+                onTap: () => {},
                 child: Container(
                   child: _integrationCount(
                       convertCount(widget.postModel.likeCount!)),
@@ -153,26 +234,22 @@ class _PostViewState extends State<PostView> {
               icon: const Icon(CupertinoIcons.bubble_left),
               color: AppColors.darkGrey,
               iconSize: 18,
-              onPressed: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => const Comments())),
+              onPressed: () async {
+                debugPrint("uid is ${widget.postModel.uid}");
+                if (widget.postModel.postId != null &&
+                    widget.postModel.uid != null) {
+                  pushNewScreenWithRouteSettings(
+                    context,
+                    screen: Comments(
+                        postId: widget.postModel.postId!,
+                        postOwnerId: widget.postModel.uid!),
+                    settings: const RouteSettings(name: Comments.routeName),
+                    withNavBar: true,
+                    pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  );
+                }
+              },
             ),
-            _integrationCount(convertCount(widget.postModel.commentCount!))
-          ],
-        ),
-        Row(
-          children: [
-            IconButton(
-              padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
-              splashColor: Colors.transparent,
-              constraints: const BoxConstraints(),
-              icon: Icon(isSaved
-                  ? CupertinoIcons.bookmark_fill
-                  : CupertinoIcons.bookmark),
-              color: AppColors.darkGrey,
-              iconSize: 18,
-              onPressed: () => changeSave(),
-            ),
-            _integrationCount("")
           ],
         ),
       ]),
@@ -225,10 +302,10 @@ class _PostViewState extends State<PostView> {
             imageUrl: widget.postModel.contents![0].source!,
           ),
           onTap: () {
-            // viewModel.openPostHero(
-            //   post: widget.postModel,
-            //   index: 0,
-            // );
+            openPostHero(
+              post: widget.postModel,
+              index: 0,
+            );
           },
         ),
       );
@@ -249,10 +326,10 @@ class _PostViewState extends State<PostView> {
                 imageUrl: widget.postModel.contents![0].source!,
               ),
               onTap: () {
-                // viewModel.openPostHero(
-                //   post: widget.postModel,
-                //   index: 0,
-                // );
+                openPostHero(
+                  post: widget.postModel,
+                  index: 0,
+                );
               },
             ),
           ),
@@ -269,10 +346,10 @@ class _PostViewState extends State<PostView> {
                 imageUrl: widget.postModel.contents![1].source!,
               ),
               onTap: () {
-                // viewModel.openPostHero(
-                //   post: widget.postModel,
-                //   index: 1,
-                // );
+                openPostHero(
+                  post: widget.postModel,
+                  index: 1,
+                );
               },
             ),
           )
@@ -295,10 +372,10 @@ class _PostViewState extends State<PostView> {
                 imageUrl: widget.postModel.contents![0].source!,
               ),
               onTap: () {
-                // viewModel.openPostHero(
-                //   post: widget.postModel,
-                //   index: 0,
-                // );
+                openPostHero(
+                  post: widget.postModel,
+                  index: 0,
+                );
               },
             ),
           ),
@@ -320,10 +397,10 @@ class _PostViewState extends State<PostView> {
                       imageUrl: widget.postModel.contents![1].source!,
                     ),
                     onTap: () {
-                      // viewModel.openPostHero(
-                      //   post: widget.postModel,
-                      //   index: 1,
-                      // );
+                      openPostHero(
+                        post: widget.postModel,
+                        index: 1,
+                      );
                     },
                   ),
                 ),
@@ -339,10 +416,10 @@ class _PostViewState extends State<PostView> {
                       imageUrl: widget.postModel.contents![2].source!,
                     ),
                     onTap: () {
-                      // viewModel.openPostHero(
-                      //   post: widget.postModel,
-                      //   index: 2,
-                      // );
+                      openPostHero(
+                        post: widget.postModel,
+                        index: 2,
+                      );
                     },
                   ),
                 ),
@@ -372,10 +449,10 @@ class _PostViewState extends State<PostView> {
                       imageUrl: widget.postModel.contents![0].source!,
                     ),
                     onTap: () {
-                      // viewModel.openPostHero(
-                      //   post: widget.postModel,
-                      //   index: 0,
-                      // );
+                      openPostHero(
+                        post: widget.postModel,
+                        index: 0,
+                      );
                     },
                   ),
                 ),
@@ -391,10 +468,10 @@ class _PostViewState extends State<PostView> {
                       imageUrl: widget.postModel.contents![2].source!,
                     ),
                     onTap: () {
-                      // viewModel.openPostHero(
-                      //   post: widget.postModel,
-                      //   index: 2,
-                      // );
+                      openPostHero(
+                        post: widget.postModel,
+                        index: 2,
+                      );
                     },
                   ),
                 ),
@@ -418,10 +495,10 @@ class _PostViewState extends State<PostView> {
                       imageUrl: widget.postModel.contents![1].source!,
                     ),
                     onTap: () {
-                      // viewModel.openPostHero(
-                      //   post: widget.postModel,
-                      //   index: 1,
-                      // );
+                      openPostHero(
+                        post: widget.postModel,
+                        index: 1,
+                      );
                     },
                   ),
                 ),
@@ -437,10 +514,10 @@ class _PostViewState extends State<PostView> {
                       imageUrl: widget.postModel.contents![3].source!,
                     ),
                     onTap: () {
-                      // viewModel.openPostHero(
-                      //   post: widget.postModel,
-                      //   index: 3,
-                      // );
+                      openPostHero(
+                        post: widget.postModel,
+                        index: 3,
+                      );
                     },
                   ),
                 ),
